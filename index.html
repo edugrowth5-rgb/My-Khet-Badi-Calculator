@@ -16,7 +16,6 @@
             --wa-green: #25D366;
         }
 
-        /* Screen Lock: Fixed position taaki hile na */
         html, body { 
             height: 100%; width: 100%; margin: 0; padding: 0; 
             overflow: hidden; position: fixed; 
@@ -32,9 +31,9 @@
         }
 
         .header { text-align: center; padding: 10px 0; border-bottom: 1px solid #eee; flex-shrink: 0; }
-        .header h1 { color: var(--primary-green); margin: 0; font-size: 24px; font-weight: 800; }
+        .header h1 { color: var(--primary-green); margin: 0; font-size: 26px; font-weight: 800; }
 
-        .scrollable-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 20px; }
+        .scrollable-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 30px; }
 
         #installBanner {
             display: none; width: 100%; background: linear-gradient(135deg, var(--primary-green), #4a7c44);
@@ -44,12 +43,14 @@
         }
 
         .config-section { background: var(--card-white); padding: 20px; border-radius: 15px; margin: 10px 0; border: 1px solid #eee; }
-        label { color: var(--primary-green); font-size: 13px; font-weight: 800; display: block; margin-bottom: 8px; }
+        
+        /* Font size badha diya gaya hai */
+        label { color: var(--primary-green); font-size: 16px; font-weight: 800; display: block; margin-bottom: 10px; }
 
         select, input { 
             width: 100%; background: #fff; border: 2px solid #ddd; padding: 15px; 
             border-radius: 10px; font-size: 18px; font-weight: 600;
-            margin-bottom: 15px; box-sizing: border-box; color: #000;
+            margin-bottom: 18px; box-sizing: border-box; color: #000;
         }
 
         .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -59,12 +60,11 @@
         .val { display: block; font-size: 22px; font-weight: 800; color: var(--primary-green); margin-top: 5px; }
         .unit { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; }
 
-        /* WhatsApp Button Styling */
         .share-btn {
             width: 100%; background: var(--wa-green); color: white; border: none;
             padding: 18px; border-radius: 15px; font-weight: 800; font-size: 18px;
             cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            gap: 10px; margin-top: 20px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+            gap: 10px; margin-top: 25px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
         }
 
         .footer { text-align: center; padding: 10px; font-size: 12px; color: #888; flex-shrink: 0; font-weight: 600; }
@@ -82,7 +82,7 @@
 
     <div class="scrollable-content">
         <div class="config-section">
-            <label>लग्गी चुनें (4 से 12 हाथ):</label>
+            <label>लग्गी का साइज (हाथ में):</label>
             <select id="laggiVal" onchange="runCalculation()">
                 <option value="4">4 हाथ</option>
                 <option value="4.5">4.5 हाथ</option>
@@ -95,9 +95,10 @@
                 <option value="12">12 हाथ</option>
             </select>
 
-            <label>इनपुट इकाई (Choose Unit):</label>
+            <label>मापने की इकाई (Unit):</label>
             <select id="inputUnit" onchange="runCalculation()">
                 <option value="sqft">वर्ग फुट (Sq. Feet)</option>
+                <option value="dismil">डिसमिल (Decimal)</option>
                 <option value="dhurki">धुरकी (Dhurki)</option>
                 <option value="dhur">धुर (Dhur)</option>
                 <option value="katha">कट्ठा (Katha)</option>
@@ -108,18 +109,19 @@
                 <option value="sqyard">वर्ग गज़ (Gaj)</option>
             </select>
 
-            <label>संख्या दर्ज करें:</label>
+            <label>संख्या (Value) भरें:</label>
             <input type="number" id="numInput" placeholder="यहाँ लिखें..." oninput="runCalculation()">
         </div>
 
         <div class="results-grid">
             <div class="tile tile-full"><span class="unit">कुल वर्ग फुट</span><span class="val" id="resSqft">0</span></div>
-            <div class="tile"><span class="unit">धुरकी</span><span class="val" id="resDhurki">0</span></div>
+            <div class="tile" style="background: #fff9e6; border: 1px solid var(--gold);"><span class="unit" style="color:var(--gold)">डिसमिल (Decimal)</span><span class="val" id="resDismil" style="color:var(--gold)">0</span></div>
             <div class="tile"><span class="unit">धुर</span><span class="val" id="resDhur">0</span></div>
             <div class="tile"><span class="unit">कट्ठा</span><span class="val" id="resKatha">0</span></div>
             <div class="tile"><span class="unit">बीघा</span><span class="val" id="resBigha">0</span></div>
             <div class="tile"><span class="unit">एकड़</span><span class="val" id="resAcre">0</span></div>
             <div class="tile"><span class="unit">हेक्टेयर</span><span class="val" id="resHect">0</span></div>
+            <div class="tile"><span class="unit">धुरकी</span><span class="val" id="resDhurki">0</span></div>
             <div class="tile"><span class="unit">वर्ग गज़ (Gaj)</span><span class="val" id="resGaj">0</span></div>
             <div class="tile"><span class="unit">वर्ग मीटर</span><span class="val" id="resMeter">0</span></div>
         </div>
@@ -133,7 +135,6 @@
 </div>
 
 <script>
-    // PWA Logic
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
@@ -156,14 +157,12 @@
         }
     }
 
-    // Sharing Logic
     function shareApp() {
         const text = "Bhai, ye Khet-Bari Calculator ekdum mast hai! Sahi maap ke liye yahan click kar: ";
         const url = window.location.href;
         window.open(`https://wa.me/?text=${encodeURIComponent(text + url)}`, '_blank');
     }
 
-    // Calculation Logic
     function runCalculation() {
         let laggiH = parseFloat(document.getElementById('laggiVal').value);
         let val = parseFloat(document.getElementById('numInput').value) || 0;
@@ -173,7 +172,9 @@
         let dhurSqft = laggiF * laggiF;
         let totalSqft = 0;
 
+        // Input Conversion
         if(unit === 'sqft') totalSqft = val;
+        else if(unit === 'dismil') totalSqft = val * 435.6;
         else if(unit === 'dhurki') totalSqft = val * (dhurSqft / 20);
         else if(unit === 'dhur') totalSqft = val * dhurSqft;
         else if(unit === 'katha') totalSqft = val * (dhurSqft * 20);
@@ -183,7 +184,9 @@
         else if(unit === 'sqmeter') totalSqft = val * 10.764;
         else if(unit === 'sqyard') totalSqft = val * 9;
 
+        // Output Results
         document.getElementById('resSqft').innerText = totalSqft.toLocaleString(undefined,{maximumFractionDigits:2});
+        document.getElementById('resDismil').innerText = (totalSqft / 435.6).toFixed(3);
         document.getElementById('resDhurki').innerText = (totalSqft / (dhurSqft / 20)).toFixed(2);
         document.getElementById('resDhur').innerText = (totalSqft / dhurSqft).toFixed(2);
         document.getElementById('resKatha').innerText = (totalSqft / (dhurSqft * 20)).toFixed(2);
