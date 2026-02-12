@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Khet-Bari Ultimate Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2d5a27">
+    
+    <style>
+        :root { 
+            --primary-green: #2d5a27; 
+            --gold: #b8860b; 
+            --bg-light: #f8f9fa; 
+            --card-white: #ffffff;
+        }
+
+        html, body { 
+            height: 100%; width: 100%; margin: 0; padding: 0; 
+            overflow: hidden; position: fixed; 
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-light);
+            display: flex; justify-content: center;
+        }
+
+        .app-shell {
+            width: 100%; max-width: 430px; height: 100%;
+            display: flex; flex-direction: column;
+            padding: 10px; box-sizing: border-box;
+        }
+
+        /* Fixed Header */
+        .header { text-align: center; padding: 10px 0; border-bottom: 1px solid #eee; flex-shrink: 0; }
+        .header h1 { color: var(--primary-green); margin: 0; font-size: 24px; font-weight: 800; }
+
+        .scrollable-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 20px; }
+
+        /* BIG FONT INSTALL BUTTON */
+        #installBanner {
+            display: none;
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-green), #4a7c44);
+            color: white;
+            padding: 18px; /* Padding badha di */
+            border-radius: 15px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 900; /* Extra Bold */
+            font-size: 20px; /* Font bada kar diya */
+            border: none;
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-transform: uppercase;
+        }
+
+        .config-section { 
+            background: var(--card-white); padding: 20px; border-radius: 15px; 
+            margin: 10px 0; border: 1px solid #eee;
+        }
+
+        label { color: var(--primary-green); font-size: 13px; font-weight: 800; display: block; margin-bottom: 8px; }
+
+        /* BIG FONT INPUTS & DROPDOWNS */
+        select, input { 
+            width: 100%; background: #fff; border: 2px solid #ddd; 
+            padding: 15px; /* Touch area bada */
+            border-radius: 10px; 
+            font-size: 18px; /* Letters bade kar diye */
+            font-weight: 600;
+            margin-bottom: 15px; box-sizing: border-box;
+            color: #000;
+        }
+
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .tile { background: #fff; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
+        .tile-full { grid-column: span 2; background: #f0f7ef; border: 1.5px solid var(--primary-green); }
+
+        /* RESULT NUMBERS */
+        .val { display: block; font-size: 22px; font-weight: 800; color: var(--primary-green); margin-top: 5px; }
+        .unit { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; }
+
+        .footer { text-align: center; padding: 10px; font-size: 12px; color: #888; flex-shrink: 0; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="app-shell">
+    <button id="installBanner" onclick="installPWA()">📲 इंस्टॉल करें (INSTALL)</button>
+
+    <div class="header">
+        <h1>खेत-बारी ULTIMATE</h1>
+        <p style="font-size: 12px; margin: 2px 0; color: var(--gold); font-weight: bold;">PREMIUM CALCULATOR</p>
+    </div>
+
+    <div class="scrollable-content">
+        <div class="config-section">
+            <label>लग्गी चुनें (4 से 12 हाथ):</label>
+            <select id="laggiVal" onchange="runCalculation()">
+                <option value="4">4 हाथ</option>
+                <option value="4.5">4.5 हाथ</option>
+                <option value="5">5 हाथ</option>
+                <option value="5.5" selected>5.5 हाथ</option>
+                <option value="6">6 हाथ</option>
+                <option value="7">7 हाथ</option>
+                <option value="8">8 हाथ</option>
+                <option value="10">10 हाथ</option>
+                <option value="12">12 हाथ</option>
+            </select>
+
+            <label>इनपुट इकाई (Choose Unit):</label>
+            <select id="inputUnit" onchange="runCalculation()">
+                <option value="sqft">वर्ग फुट (Sq. Feet)</option>
+                <option value="dhurki">धुरकी (Dhurki)</option>
+                <option value="dhur">धुर (Dhur)</option>
+                <option value="katha">कट्ठा (Katha)</option>
+                <option value="bigha">बीघा (Bigha)</option>
+                <option value="acre">एकड़ (Acre)</option>
+                <option value="hectare">हेक्टेयर (Hectare)</option>
+                <option value="sqmeter">वर्ग मीटर (Sq. Meter)</option>
+                <option value="sqyard">वर्ग गज़ (Gaj)</option>
+            </select>
+
+            <label>संख्या दर्ज करें (Enter Number):</label>
+            <input type="number" id="numInput" placeholder="यहाँ लिखें..." oninput="runCalculation()">
+        </div>
+
+        <div class="results-grid">
+            <div class="tile tile-full"><span class="unit">कुल वर्ग फुट</span><span class="val" id="resSqft">0</span></div>
+            <div class="tile"><span class="unit">धुरकी</span><span class="val" id="resDhurki">0</span></div>
+            <div class="tile"><span class="unit">धुर</span><span class="val" id="resDhur">0</span></div>
+            <div class="tile"><span class="unit">कट्ठा</span><span class="val" id="resKatha">0</span></div>
+            <div class="tile"><span class="unit">बीघा</span><span class="val" id="resBigha">0</span></div>
+            <div class="tile"><span class="unit">एकड़</span><span class="val" id="resAcre">0</span></div>
+            <div class="tile"><span class="unit">हेक्टेयर</span><span class="val" id="resHect">0</span></div>
+            <div class="tile"><span class="unit">वर्ग गज़ (Gaj)</span><span class="val" id="resGaj">0</span></div>
+            <div class="tile"><span class="unit">वर्ग मीटर</span><span class="val" id="resMeter">0</span></div>
+        </div>
+    </div>
+
+    <div class="footer">© COMPUTER SE SHIKHO • BY SAGAR</div>
+</div>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
+        });
+    }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        document.getElementById('installBanner').style.display = 'block';
+    });
+
+    async function installPWA() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') document.getElementById('installBanner').style.display = 'none';
+            deferredPrompt = null;
+        }
+    }
+
+    function runCalculation() {
+        let laggiH = parseFloat(document.getElementById('laggiVal').value);
+        let val = parseFloat(document.getElementById('numInput').value) || 0;
+        let unit = document.getElementById('inputUnit').value;
+
+        let laggiF = laggiH * 1.5;
+        let dhurSqft = laggiF * laggiF;
+        let totalSqft = 0;
+
+        if(unit === 'sqft') totalSqft = val;
+        else if(unit === 'dhurki') totalSqft = val * (dhurSqft / 20);
+        else if(unit === 'dhur') totalSqft = val * dhurSqft;
+        else if(unit === 'katha') totalSqft = val * (dhurSqft * 20);
+        else if(unit === 'bigha') totalSqft = val * (dhurSqft * 400);
+        else if(unit === 'acre') totalSqft = val * 43560;
+        else if(unit === 'hectare') totalSqft = val * 107639;
+        else if(unit === 'sqmeter') totalSqft = val * 10.764;
+        else if(unit === 'sqyard') totalSqft = val * 9;
+
+        document.getElementById('resSqft').innerText = totalSqft.toLocaleString(undefined,{maximumFractionDigits:2});
+        document.getElementById('resDhurki').innerText = (totalSqft / (dhurSqft / 20)).toFixed(2);
+        document.getElementById('resDhur').innerText = (totalSqft / dhurSqft).toFixed(2);
+        document.getElementById('resKatha').innerText = (totalSqft / (dhurSqft * 20)).toFixed(2);
+        document.getElementById('resBigha').innerText = (totalSqft / (dhurSqft * 400)).toFixed(2);
+        document.getElementById('resAcre').innerText = (totalSqft / 43560).toFixed(4);
+        document.getElementById('resHect').innerText = (totalSqft / 107639).toFixed(4);
+        document.getElementById('resGaj').innerText = (totalSqft / 9).toFixed(2);
+        document.getElementById('resMeter').innerText = (totalSqft / 10.764).toFixed(2);
+    }
+</script>
+
+</body>
+</html>
