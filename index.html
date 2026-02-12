@@ -14,6 +14,7 @@
             --bg-light: #f8f9fa; 
             --card-white: #ffffff;
             --wa-green: #25D366;
+            --reset-red: #d32f2f;
         }
 
         html, body { 
@@ -43,8 +44,6 @@
         }
 
         .config-section { background: var(--card-white); padding: 20px; border-radius: 15px; margin: 10px 0; border: 1px solid #eee; }
-        
-        /* Font size badha diya gaya hai */
         label { color: var(--primary-green); font-size: 16px; font-weight: 800; display: block; margin-bottom: 10px; }
 
         select, input { 
@@ -55,16 +54,27 @@
 
         .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .tile { background: #fff; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
+        
+        /* Highlighted Tiles */
         .tile-full { grid-column: span 2; background: #f0f7ef; border: 1.5px solid var(--primary-green); }
+        .tile-gold { grid-column: span 2; background: #fff9e6; border: 2px solid var(--gold); }
 
         .val { display: block; font-size: 22px; font-weight: 800; color: var(--primary-green); margin-top: 5px; }
         .unit { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; }
 
+        /* Action Buttons */
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        
         .share-btn {
-            width: 100%; background: var(--wa-green); color: white; border: none;
-            padding: 18px; border-radius: 15px; font-weight: 800; font-size: 18px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; 
-            gap: 10px; margin-top: 25px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+            flex: 2; background: var(--wa-green); color: white; border: none;
+            padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .reset-btn {
+            flex: 1; background: #fff; color: var(--reset-red); border: 2px solid var(--reset-red);
+            padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px;
+            cursor: pointer; text-align: center;
         }
 
         .footer { text-align: center; padding: 10px; font-size: 12px; color: #888; flex-shrink: 0; font-weight: 600; }
@@ -82,7 +92,7 @@
 
     <div class="scrollable-content">
         <div class="config-section">
-            <label>लग्गी का साइज (हाथ में):</label>
+            <label>लग्गी का साइज (हाथ):</label>
             <select id="laggiVal" onchange="runCalculation()">
                 <option value="4">4 हाथ</option>
                 <option value="4.5">4.5 हाथ</option>
@@ -95,10 +105,10 @@
                 <option value="12">12 हाथ</option>
             </select>
 
-            <label>मापने की इकाई (Unit):</label>
+            <label>इकाई चुनें (Unit):</label>
             <select id="inputUnit" onchange="runCalculation()">
                 <option value="sqft">वर्ग फुट (Sq. Feet)</option>
-                <option value="dismil">डिसमिल (Decimal)</option>
+                <option value="dismil">डिसमील (Decimal)</option>
                 <option value="dhurki">धुरकी (Dhurki)</option>
                 <option value="dhur">धुर (Dhur)</option>
                 <option value="katha">कट्ठा (Katha)</option>
@@ -109,13 +119,13 @@
                 <option value="sqyard">वर्ग गज़ (Gaj)</option>
             </select>
 
-            <label>संख्या (Value) भरें:</label>
+            <label>संख्या भरें:</label>
             <input type="number" id="numInput" placeholder="यहाँ लिखें..." oninput="runCalculation()">
         </div>
 
         <div class="results-grid">
             <div class="tile tile-full"><span class="unit">कुल वर्ग फुट</span><span class="val" id="resSqft">0</span></div>
-            <div class="tile" style="background: #fff9e6; border: 1px solid var(--gold);"><span class="unit" style="color:var(--gold)">डिसमिल (Decimal)</span><span class="val" id="resDismil" style="color:var(--gold)">0</span></div>
+            <div class="tile tile-gold"><span class="unit" style="color:var(--gold)">डिसमील (DECIMAL)</span><span class="val" id="resDismil" style="color:var(--gold)">0</span></div>
             <div class="tile"><span class="unit">धुर</span><span class="val" id="resDhur">0</span></div>
             <div class="tile"><span class="unit">कट्ठा</span><span class="val" id="resKatha">0</span></div>
             <div class="tile"><span class="unit">बीघा</span><span class="val" id="resBigha">0</span></div>
@@ -126,9 +136,10 @@
             <div class="tile"><span class="unit">वर्ग मीटर</span><span class="val" id="resMeter">0</span></div>
         </div>
 
-        <button class="share-btn" onclick="shareApp()">
-            <span>🟢 WhatsApp पर शेयर करें</span>
-        </button>
+        <div class="btn-group">
+            <button class="reset-btn" onclick="resetApp()">🔄 RESET</button>
+            <button class="share-btn" onclick="shareApp()">🟢 शेयर करें</button>
+        </div>
     </div>
 
     <div class="footer">© COMPUTER SE SHIKHO • BY SAGAR</div>
@@ -158,9 +169,14 @@
     }
 
     function shareApp() {
-        const text = "Bhai, ye Khet-Bari Calculator ekdum mast hai! Sahi maap ke liye yahan click kar: ";
+        const text = "Bhai, ye Khet-Bari Calculator kamaal hai! Ekdum sahi maap ke liye yahan click kar: ";
         const url = window.location.href;
         window.open(`https://wa.me/?text=${encodeURIComponent(text + url)}`, '_blank');
+    }
+
+    function resetApp() {
+        document.getElementById('numInput').value = '';
+        runCalculation();
     }
 
     function runCalculation() {
@@ -172,7 +188,6 @@
         let dhurSqft = laggiF * laggiF;
         let totalSqft = 0;
 
-        // Input Conversion
         if(unit === 'sqft') totalSqft = val;
         else if(unit === 'dismil') totalSqft = val * 435.6;
         else if(unit === 'dhurki') totalSqft = val * (dhurSqft / 20);
@@ -184,7 +199,6 @@
         else if(unit === 'sqmeter') totalSqft = val * 10.764;
         else if(unit === 'sqyard') totalSqft = val * 9;
 
-        // Output Results
         document.getElementById('resSqft').innerText = totalSqft.toLocaleString(undefined,{maximumFractionDigits:2});
         document.getElementById('resDismil').innerText = (totalSqft / 435.6).toFixed(3);
         document.getElementById('resDhurki').innerText = (totalSqft / (dhurSqft / 20)).toFixed(2);
