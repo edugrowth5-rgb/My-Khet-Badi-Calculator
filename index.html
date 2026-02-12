@@ -13,8 +13,10 @@
             --gold: #b8860b; 
             --bg-light: #f8f9fa; 
             --card-white: #ffffff;
+            --wa-green: #25D366;
         }
 
+        /* Screen Lock: Fixed position taaki hile na */
         html, body { 
             height: 100%; width: 100%; margin: 0; padding: 0; 
             overflow: hidden; position: fixed; 
@@ -29,55 +31,41 @@
             padding: 10px; box-sizing: border-box;
         }
 
-        /* Fixed Header */
         .header { text-align: center; padding: 10px 0; border-bottom: 1px solid #eee; flex-shrink: 0; }
         .header h1 { color: var(--primary-green); margin: 0; font-size: 24px; font-weight: 800; }
 
         .scrollable-content { flex-grow: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 20px; }
 
-        /* BIG FONT INSTALL BUTTON */
         #installBanner {
-            display: none;
-            width: 100%;
-            background: linear-gradient(135deg, var(--primary-green), #4a7c44);
-            color: white;
-            padding: 18px; /* Padding badha di */
-            border-radius: 15px;
-            margin: 10px 0;
-            text-align: center;
-            font-weight: 900; /* Extra Bold */
-            font-size: 20px; /* Font bada kar diya */
-            border: none;
-            flex-shrink: 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            text-transform: uppercase;
+            display: none; width: 100%; background: linear-gradient(135deg, var(--primary-green), #4a7c44);
+            color: white; padding: 18px; border-radius: 15px; margin: 10px 0;
+            text-align: center; font-weight: 900; font-size: 20px; border: none;
+            flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,0,0,0.2); text-transform: uppercase;
         }
 
-        .config-section { 
-            background: var(--card-white); padding: 20px; border-radius: 15px; 
-            margin: 10px 0; border: 1px solid #eee;
-        }
-
+        .config-section { background: var(--card-white); padding: 20px; border-radius: 15px; margin: 10px 0; border: 1px solid #eee; }
         label { color: var(--primary-green); font-size: 13px; font-weight: 800; display: block; margin-bottom: 8px; }
 
-        /* BIG FONT INPUTS & DROPDOWNS */
         select, input { 
-            width: 100%; background: #fff; border: 2px solid #ddd; 
-            padding: 15px; /* Touch area bada */
-            border-radius: 10px; 
-            font-size: 18px; /* Letters bade kar diye */
-            font-weight: 600;
-            margin-bottom: 15px; box-sizing: border-box;
-            color: #000;
+            width: 100%; background: #fff; border: 2px solid #ddd; padding: 15px; 
+            border-radius: 10px; font-size: 18px; font-weight: 600;
+            margin-bottom: 15px; box-sizing: border-box; color: #000;
         }
 
         .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .tile { background: #fff; padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #eee; }
         .tile-full { grid-column: span 2; background: #f0f7ef; border: 1.5px solid var(--primary-green); }
 
-        /* RESULT NUMBERS */
         .val { display: block; font-size: 22px; font-weight: 800; color: var(--primary-green); margin-top: 5px; }
         .unit { font-size: 11px; color: #555; font-weight: 700; text-transform: uppercase; }
+
+        /* WhatsApp Button Styling */
+        .share-btn {
+            width: 100%; background: var(--wa-green); color: white; border: none;
+            padding: 18px; border-radius: 15px; font-weight: 800; font-size: 18px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; 
+            gap: 10px; margin-top: 20px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+        }
 
         .footer { text-align: center; padding: 10px; font-size: 12px; color: #888; flex-shrink: 0; font-weight: 600; }
     </style>
@@ -89,7 +77,7 @@
 
     <div class="header">
         <h1>खेत-बारी ULTIMATE</h1>
-        <p style="font-size: 12px; margin: 2px 0; color: var(--gold); font-weight: bold;">PREMIUM CALCULATOR</p>
+        <p style="font-size: 12px; margin: 2px 0; color: var(--gold); font-weight: bold;">SAGAR'S PREMIUM CALCULATOR</p>
     </div>
 
     <div class="scrollable-content">
@@ -120,7 +108,7 @@
                 <option value="sqyard">वर्ग गज़ (Gaj)</option>
             </select>
 
-            <label>संख्या दर्ज करें (Enter Number):</label>
+            <label>संख्या दर्ज करें:</label>
             <input type="number" id="numInput" placeholder="यहाँ लिखें..." oninput="runCalculation()">
         </div>
 
@@ -135,12 +123,17 @@
             <div class="tile"><span class="unit">वर्ग गज़ (Gaj)</span><span class="val" id="resGaj">0</span></div>
             <div class="tile"><span class="unit">वर्ग मीटर</span><span class="val" id="resMeter">0</span></div>
         </div>
+
+        <button class="share-btn" onclick="shareApp()">
+            <span>🟢 WhatsApp पर शेयर करें</span>
+        </button>
     </div>
 
     <div class="footer">© COMPUTER SE SHIKHO • BY SAGAR</div>
 </div>
 
 <script>
+    // PWA Logic
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
@@ -163,6 +156,14 @@
         }
     }
 
+    // Sharing Logic
+    function shareApp() {
+        const text = "Bhai, ye Khet-Bari Calculator ekdum mast hai! Sahi maap ke liye yahan click kar: ";
+        const url = window.location.href;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + url)}`, '_blank');
+    }
+
+    // Calculation Logic
     function runCalculation() {
         let laggiH = parseFloat(document.getElementById('laggiVal').value);
         let val = parseFloat(document.getElementById('numInput').value) || 0;
