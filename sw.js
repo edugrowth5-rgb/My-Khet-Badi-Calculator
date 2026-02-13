@@ -1,4 +1,4 @@
-const CACHE_NAME = 'khet-bari-light-v4';
+const CACHE_NAME = 'khet-bari-light-v5';
 const assets = [
   './',
   './index.html',
