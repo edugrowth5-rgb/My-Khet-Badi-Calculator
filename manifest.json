@@ -2,7 +2,7 @@
   "name": "Khet-Bari Ultimate Pro",
   "short_name": "KhetBari",
   "description": "Premium Land Measurement Tool by Sagar",
-  "start_url": "index.html",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#f8f9fa",
   "theme_color": "#2d5a27",
